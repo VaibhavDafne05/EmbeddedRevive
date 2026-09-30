@@ -8,13 +8,14 @@ The teaching model is a common Cortex-M class microcontroller, and a board that 
 
 ## How to use it
 
-Three courses share one player. Progress for each course is stored separately in the browser under the key `embedded-refresher-v1`.
+Four courses share one player. Progress for each course is stored separately in the browser under the key `embedded-refresher-v1`.
 
 | Tab | Lessons | What it is |
 | --- | --- | --- |
 | Chip | 93 | The microcontroller, ARM, algorithms, scheduling, boot, buses, AUTOSAR, safety, and the build |
 | C | 30 | The C language, then the habits that matter on a small chip |
 | Linux | 37 | Boot, then the commands you actually type on the board |
+| MCU | 23 | 8051 fundamentals, then ARM Cortex-M architecture and debug |
 
 Controls:
 
@@ -24,12 +25,15 @@ Controls:
 - The last picture shows a takeaway and one question. The check mark is stored for that lesson.
 - **Clear check marks** clears the course you are looking at.
 - **Signal Journey**, beside the course tabs, follows VehicleSpeed = 72.34 km/h. That is raw 7234 with factor 0.01, CAN ID 0x180, DLC 8, and little-endian bytes `42 1C` followed by six zeros. The stages are the vehicle, the CAN frame, the controller, CanDrv and CanIf, PduR, COM, the I-Signal, the RTE, the software component, and the runnable. Up and down arrows move between stages. Escape closes the page. The lesson behind it does not advance while it is open.
+- **ECU Signal Simulator**, beside Signal Journey, edits those same bytes and injects timeout, range, corrupt, and stale faults. Reset restores `42 1C`. Escape closes it. The lesson behind it does not advance while it is open.
+- The left rail also has **MCU Fundamentals**. Open jumps to the MCU tab.
 
 Addresses, with lesson and picture numbers starting at 1:
 
 - Chip: `#62.4`
 - C: `#c/13.4`
 - Linux: `#linux/5.2`
+- MCU: `#mcu/12.1`
 
 To open a picture already paused, add a query before the hash is replaced, for example `index.html?still=1&course=c&lesson=13&frame=4`.
 
@@ -395,6 +399,50 @@ The boot chain is boot ROM inside the chip, then a small loader that starts DRAM
 
 Out of scope unless you add it later: Yocto and Buildroot recipes, kernel-module source, a systemd cookbook, packet-filter rules, and choosing a distribution.
 
+## MCU
+
+Twenty-three lessons. Ten stay with the 8051. Thirteen move to Cortex-M. The reference manual still wins for the part you are holding.
+
+### 8051 basics
+
+1. The 8051 mental model
+2. 8051 architecture
+3. 8051 registers
+
+### 8051 memory
+
+4. 8051 memory organization
+5. 8051 stack
+
+### 8051 GPIO, timers, interrupts, serial, and coding
+
+6. 8051 ports
+7. 8051 timers and counters
+8. 8051 interrupt system
+9. 8051 UART
+10. 8051 C vs bare metal
+
+### ARM Cortex-M
+
+11. Why Cortex-M
+12. Cortex-M registers
+13. Cortex-M exception model
+14. NVIC
+15. SysTick
+16. Memory-mapped peripherals
+17. DMA
+18. MPU and privilege
+
+### ARM startup, debugging, RTOS, performance, and comparison
+
+19. Vector table and startup
+20. SWD and GDB
+21. Context switching
+22. Clock and power
+23. 8051 to Cortex-M
+
+Each picture lights the current step: concept, architecture, trace, compare, then practice. The last picture names the lesson and whether that lesson is on the 8051 track or the ARM track.
+
 ## Files
 
 | Path | Role |
@@ -418,8 +466,12 @@ Out of scope unless you add it later: Yocto and Buildroot recipes, kernel-module
 | `js/linux-scenes.js` | Pictures for Linux lessons 1–21 |
 | `js/linux-more-scenes.js` | Pictures for Linux lessons 22–37 |
 | `js/signal-journey.js` | The VehicleSpeed page: vehicle, CAN, controller, MCAL, PduR, COM, I-Signal, RTE, SWC, runnable |
+| `js/mcu-lessons.js` | MCU lessons 1–23, 8051 then Cortex-M |
+| `js/mcu-scenes.js` | Pictures for the MCU lessons |
+| `js/mcu-launcher.js` | The rail control that opens the MCU tab |
+| `js/signal-simulator.js` | The VehicleSpeed payload and fault simulator |
 
-Lesson text is appended with `LESSONS.push` or `LINUX_LESSONS.push` or `C_LESSONS.push`, so a later file must load after the array exists. Scene files must load after `scenes.js`, because they share `SCENES` and the drawing helpers. `app.js` loads last.
+Lesson text is appended with `LESSONS.push` or `LINUX_LESSONS.push` or `C_LESSONS.push`. `MCU_LESSONS` is its own array. A later file must load after the array exists. Scene files must load after `scenes.js`, because they share `SCENES` and the drawing helpers. `app.js` loads last.
 
 Pictures use an SVG view box of 800 by 450. A step is shown by marking the group with the frames it belongs to. The player toggles a class. It does not move those groups with a CSS transform, because that would cancel motion drawn inside the picture.
 
