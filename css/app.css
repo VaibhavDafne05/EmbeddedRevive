@@ -143,6 +143,13 @@ button, select { font: inherit; color: inherit; }
   gap: 14px;
 }
 
+.course-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
 .course-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -620,3 +627,31 @@ h1 {
 .scene-expansion .box { transition: transform .18s ease, opacity .18s ease; }
 .scene-expansion [data-show] { opacity: .18; }
 .scene-expansion [data-show].on { opacity: 1; }
+
+/* Interactive ECU Signal Journey */
+.journey-open{border:1px solid var(--line);background:var(--stage);border-radius:12px;padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:9px;margin-left:auto}
+.journey-open span{font-weight:650}.journey-open small{color:var(--muted);font-size:11px}.journey-open:hover{border-color:var(--green)}
+.journey-modal[hidden]{display:none}.journey-modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px}
+.journey-backdrop{position:absolute;inset:0;background:rgba(23,33,30,.72);backdrop-filter:blur(3px)}
+.journey-panel{position:relative;width:min(1120px,96vw);max-height:min(820px,94vh);overflow:auto;background:var(--paper);border:1px solid #c9c0b2;border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.28);padding:24px}
+.journey-head{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:16px}
+.journey-head h2{margin:4px 0 5px;font-family:var(--serif);font-size:30px;line-height:1.1}.journey-head p:last-child{margin:0;color:var(--muted)}
+.journey-close{width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:transparent;cursor:pointer;font-size:25px}
+.journey-grid{display:grid;grid-template-columns:290px 1fr;min-height:490px}
+.journey-stages{border-right:1px solid var(--line);padding:16px 16px 16px 0;display:grid;align-content:start;gap:5px}
+.journey-stage{border:0;background:transparent;border-radius:10px;text-align:left;padding:9px 10px;display:grid;grid-template-columns:30px 1fr;gap:9px;cursor:pointer}
+.journey-stage:hover{background:var(--stage)}.journey-stage.selected{background:var(--green-soft)}
+.journey-num{font-family:var(--mono);color:var(--muted);font-size:12px;padding-top:2px}.journey-stage b{display:block;font-size:14px}.journey-stage small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.journey-detail{padding:24px 8px 20px 28px}.journey-progress{height:5px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:24px}.journey-progress span{display:block;height:100%;background:var(--green)}
+.journey-kicker{margin:0;color:var(--copper);text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:700}
+.journey-detail h3{font-family:var(--serif);font-size:28px;margin:5px 0 10px}.journey-what{max-width:70ch;color:var(--muted)}
+.journey-representation{margin:20px 0;padding:16px;background:var(--rail);color:var(--cream);border-radius:12px}
+.journey-representation span{display:block;color:#a3998d;font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.journey-representation code{font-family:var(--mono);font-size:14px;line-height:1.6}
+.journey-cols{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}.journey-cols section{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--stage)}
+.journey-cols h4{margin:0 0 7px}.journey-cols p,.journey-cols ul{margin:0;color:var(--muted);font-size:13px}.journey-cols ul{padding-left:18px}
+.journey-nav{display:flex;align-items:center;justify-content:space-between;margin-top:20px;gap:12px;color:var(--muted);font-size:12px}
+.journey-foot{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:6px;font-size:12px;color:var(--muted)}
+.journey-foot div{display:grid;grid-template-columns:130px 1fr;gap:8px}.journey-foot b{color:var(--ink)}
+body.journey-opened{overflow:hidden}
+@media(max-width:760px){.journey-modal{padding:8px}.journey-panel{padding:16px;max-height:96vh}.journey-grid{grid-template-columns:1fr}.journey-stages{border-right:0;border-bottom:1px solid var(--line);grid-template-columns:repeat(2,1fr);max-height:230px;overflow:auto}.journey-detail{padding:20px 0}.journey-cols{grid-template-columns:1fr}.journey-open small{display:none}}

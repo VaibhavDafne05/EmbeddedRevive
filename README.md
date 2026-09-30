@@ -23,6 +23,7 @@ Controls:
 - **Pace** switches between steady and brisk.
 - The last picture shows a takeaway and one question. The check mark is stored for that lesson.
 - **Clear check marks** clears the course you are looking at.
+- **Signal Journey**, beside the course tabs, follows VehicleSpeed = 72.34 km/h. That is raw 7234 with factor 0.01, CAN ID 0x180, DLC 8, and little-endian bytes `42 1C` followed by six zeros. The stages are the vehicle, the CAN frame, the controller, CanDrv and CanIf, PduR, COM, the I-Signal, the RTE, the software component, and the runnable. Up and down arrows move between stages. Escape closes the page. The lesson behind it does not advance while it is open.
 
 Addresses, with lesson and picture numbers starting at 1:
 
@@ -416,6 +417,7 @@ Out of scope unless you add it later: Yocto and Buildroot recipes, kernel-module
 | `js/linux-more-lessons.js` | Linux lessons 22–37 |
 | `js/linux-scenes.js` | Pictures for Linux lessons 1–21 |
 | `js/linux-more-scenes.js` | Pictures for Linux lessons 22–37 |
+| `js/signal-journey.js` | The VehicleSpeed page: vehicle, CAN, controller, MCAL, PduR, COM, I-Signal, RTE, SWC, runnable |
 
 Lesson text is appended with `LESSONS.push` or `LINUX_LESSONS.push` or `C_LESSONS.push`, so a later file must load after the array exists. Scene files must load after `scenes.js`, because they share `SCENES` and the drawing helpers. `app.js` loads last.
 

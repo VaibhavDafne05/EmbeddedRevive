@@ -119,6 +119,10 @@ function schedule() {
   const wait = dwell(currentLesson().steps[state.frame]);
   timer = setTimeout(function () {
     if (token !== playToken || !state.playing) return;
+    if (document.body.classList.contains("journey-opened")) {
+      schedule();
+      return;
+    }
     const last = currentLesson().steps.length - 1;
     if (state.frame >= last) {
       state.playing = false;
@@ -415,6 +419,10 @@ function init() {
   byId("tab-c").addEventListener("click", function () { switchCourse("c"); });
   byId("tab-linux").addEventListener("click", function () { switchCourse("linux"); });
   window.addEventListener("keydown", function (event) {
+    if (document.body.classList.contains("journey-opened")) {
+      if (event.code === "Space") event.preventDefault();
+      return;
+    }
     const tag = document.activeElement && document.activeElement.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
     if (event.code === "Space") {
