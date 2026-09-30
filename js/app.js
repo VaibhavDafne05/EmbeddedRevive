@@ -11,7 +11,8 @@ const state = {
   books: {
     chip: { index: 0, done: {} },
     c: { index: 0, done: {} },
-    linux: { index: 0, done: {} }
+    linux: { index: 0, done: {} },
+    mcu: { index: 0, done: {} }
   }
 };
 
@@ -25,17 +26,19 @@ const byId = (id) => document.getElementById(id);
 function activeLessons() {
   if (state.course === "linux") return LINUX_LESSONS;
   if (state.course === "c") return C_LESSONS;
+  if (state.course === "mcu") return MCU_LESSONS;
   return LESSONS;
 }
 
 function courseList(course) {
   if (course === "linux") return LINUX_LESSONS;
   if (course === "c") return C_LESSONS;
+  if (course === "mcu") return MCU_LESSONS;
   return LESSONS;
 }
 
 function knownCourse(course) {
-  if (course === "linux" || course === "c") return course;
+  if (course === "linux" || course === "c" || course === "mcu") return course;
   return "chip";
 }
 
@@ -57,11 +60,13 @@ function loadProgress() {
       state.books.chip = readBook(raw.chip, LESSONS);
       state.books.linux = readBook(raw.linux, LINUX_LESSONS);
       state.books.c = readBook(raw.c, C_LESSONS);
+      state.books.mcu = readBook(raw.mcu, MCU_LESSONS);
       state.course = knownCourse(raw.course);
     } else {
       state.books.chip = readBook(raw, LESSONS);
       state.books.linux = { index: 0, done: {} };
       state.books.c = { index: 0, done: {} };
+      state.books.mcu = { index: 0, done: {} };
       state.course = "chip";
     }
   } catch (err) {
@@ -69,7 +74,8 @@ function loadProgress() {
     state.books = {
       chip: { index: 0, done: {} },
       c: { index: 0, done: {} },
-      linux: { index: 0, done: {} }
+      linux: { index: 0, done: {} },
+      mcu: { index: 0, done: {} }
     };
   }
   state.index = state.books[state.course].index;
@@ -83,7 +89,8 @@ function saveProgress() {
     pace: state.pace,
     chip: state.books.chip,
     c: state.books.c,
-    linux: state.books.linux
+    linux: state.books.linux,
+    mcu: state.books.mcu
   }));
 }
 
@@ -119,7 +126,7 @@ function schedule() {
   const wait = dwell(currentLesson().steps[state.frame]);
   timer = setTimeout(function () {
     if (token !== playToken || !state.playing) return;
-    if (document.body.classList.contains("journey-opened")) {
+    if (document.body.classList.contains("journey-opened") || document.body.classList.contains("sim-opened")) {
       schedule();
       return;
     }
@@ -283,22 +290,27 @@ function render() {
   const lesson = currentLesson();
   const step = lesson.steps[state.frame];
   const last = lesson.steps.length - 1;
-  document.title = lesson.title + (state.course === "linux" ? " · Linux refresher" : state.course === "c" ? " · C refresher" : " · Embedded refresher");
+  document.title = lesson.title + (state.course === "linux" ? " · Linux refresher" : state.course === "c" ? " · C refresher" : state.course === "mcu" ? " · MCU refresher" : " · Embedded refresher");
   byId("module").textContent = lesson.module;
   byId("title").textContent = lesson.title;
   byId("count").textContent = "Lesson " + (state.index + 1) + " of " + activeLessons().length;
   byId("tab-chip").setAttribute("aria-selected", state.course === "chip" ? "true" : "false");
   byId("tab-c").setAttribute("aria-selected", state.course === "c" ? "true" : "false");
   byId("tab-linux").setAttribute("aria-selected", state.course === "linux" ? "true" : "false");
+  byId("tab-mcu").setAttribute("aria-selected", state.course === "mcu" ? "true" : "false");
   byId("brand-note").textContent = state.course === "linux"
     ? "Plain words. Moving pictures. From the first instruction, through the shell, to the network and the next boot."
     : state.course === "c"
     ? "Plain words. Moving pictures. The C language, then the habits that matter on a small chip."
+    : state.course === "mcu"
+    ? "Plain words. Moving pictures. Build MCU fundamentals from 8051 mental models to ARM Cortex-M architecture and debug."
     : "Plain words. Moving pictures. From the chip and the buses through AUTOSAR, safety, and the build.";
   byId("rail-blurb").textContent = state.course === "linux"
     ? "Teaching model for a board that already runs Linux. The board manual still names the boot pins and the real device paths."
     : state.course === "c"
     ? "Teaching model for C on a microcontroller. Widths match a common Cortex-M. The compiler manual still wins for its choices."
+    : state.course === "mcu"
+    ? "MCU track: 8051 fundamentals to ARM Cortex-M. The reference manual and datasheet still win for exact device behavior."
     : "Teaching model for everyday microcontrollers. The datasheet still wins for exact registers and voltages.";
   byId("word").innerHTML = "<b>" + lesson.word.term + "</b> " + lesson.word.means;
   byId("line").textContent = step.text;
@@ -315,7 +327,7 @@ function render() {
   const takeaway = byId("takeaway");
   takeaway.hidden = state.frame !== last;
   takeaway.textContent = lesson.takeaway;
-  const prefix = state.course === "linux" ? "#linux/" : state.course === "c" ? "#c/" : "#";
+  const prefix = state.course === "linux" ? "#linux/" : state.course === "c" ? "#c/" : state.course === "mcu" ? "#mcu/" : "#";
   const hash = prefix + (state.index + 1) + "." + (state.frame + 1);
   if (location.hash !== hash || location.search) {
     history.replaceState(null, "", location.pathname + hash);
@@ -331,10 +343,11 @@ function render() {
 function lessonFromHash() {
   const linux = /^#linux\/(\d+)(?:\.(\d+))?/.exec(location.hash);
   const clang = /^#c\/(\d+)(?:\.(\d+))?/.exec(location.hash);
+  const mcu = /^#mcu\/(\d+)(?:\.(\d+))?/.exec(location.hash);
   const chip = /^#(\d+)(?:\.(\d+))?/.exec(location.hash);
-  const match = linux || clang || chip;
+  const match = linux || clang || mcu || chip;
   if (!match) return null;
-  const course = linux ? "linux" : clang ? "c" : "chip";
+  const course = linux ? "linux" : clang ? "c" : mcu ? "mcu" : "chip";
   const list = courseList(course);
   const index = Number(match[1]) - 1;
   if (!list[index]) return null;
@@ -418,8 +431,9 @@ function init() {
   byId("tab-chip").addEventListener("click", function () { switchCourse("chip"); });
   byId("tab-c").addEventListener("click", function () { switchCourse("c"); });
   byId("tab-linux").addEventListener("click", function () { switchCourse("linux"); });
+  byId("tab-mcu").addEventListener("click", function () { switchCourse("mcu"); });
   window.addEventListener("keydown", function (event) {
-    if (document.body.classList.contains("journey-opened")) {
+    if (document.body.classList.contains("journey-opened") || document.body.classList.contains("sim-opened")) {
       if (event.code === "Space") event.preventDefault();
       return;
     }
@@ -442,7 +456,7 @@ function init() {
   let start = lessonFromHash();
   if (params.get("lesson")) {
     const asked = params.get("course");
-    const course = asked === "linux" || asked === "chip" || asked === "c" ? asked : (start ? start.course : state.course);
+    const course = asked === "linux" || asked === "chip" || asked === "c" || asked === "mcu" ? asked : (start ? start.course : state.course);
     const list = courseList(course);
     const index = Number(params.get("lesson")) - 1;
     const frame = params.get("frame") ? Number(params.get("frame")) - 1 : 0;
